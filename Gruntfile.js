@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                 jshintrc : '.jshintrc'
             },
             devise : [ 'src/*.js' ],
-            test : [ 'test/*.js', 'test/specs/*.js' ],
+            test : [ 'test/*.js', 'test/spec/*.js' ],
         },
 
         plato: {
@@ -71,6 +71,11 @@ module.exports = function(grunt) {
             continuous: {
                 singleRun: false
             }
+        },
+
+        watch: {
+            files: ['src/*.js', 'test/*.js', 'test/spec/*.js'],
+            tasks: ['karma:unit']
         }
     });
 

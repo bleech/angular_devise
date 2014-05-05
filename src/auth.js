@@ -5,7 +5,8 @@ devise.provider('Auth', function AuthProvider() {
     var paths = {
         login: '/users/sign_in.json',
         logout: '/users/sign_out.json',
-        register: '/users.json'
+        register: '/users.json',
+        confirm: '/users/confirmation.json'
     };
 
     /**
@@ -14,7 +15,8 @@ devise.provider('Auth', function AuthProvider() {
     var methods = {
         login: 'POST',
         logout: 'DELETE',
-        register: 'POST'
+        register: 'POST',
+        confirm: 'GET'
     };
 
     /**
@@ -183,6 +185,28 @@ devise.provider('Auth', function AuthProvider() {
             register: function(creds) {
                 creds = creds || {};
                 return $http(httpConfig('register', {user: creds})).then(parse).then(save);
+            },
+
+            /**
+             * A confirm function to confirm
+             * with the server.
+             *
+             * The path and HTTP method used to login are configurable
+             * using
+             *
+             *  angular.module('myModule', ['Devise']).
+             *  config(function(AuthProvider) {
+             *      AuthProvider.confirmPath('path/on/server.json');
+             *      AuthProvider.confirmMethod('GET');
+             *  });
+             *
+             * @param {Object} [token] A confirmation token.
+             * @returns {Promise} A $http promise that will be resolved or
+             *                  rejected by the server.
+             */
+            confirm: function(token) {
+                token = token || {};
+                return $http(httpConfig('confirm', token)).then(parse).then(save);
             },
 
             /**

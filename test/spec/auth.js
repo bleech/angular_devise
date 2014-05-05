@@ -60,6 +60,10 @@ describe('Provider: Devise.Auth', function () {
             testPathConfigure('register', 'POST');
         });
 
+        it('.confirmPath', function() {
+            testPathConfigure('confirm', 'GET');
+        });
+
         it('.loginMethod', function() {
             testPathConfigure('login', 'GET', true);
         });
@@ -70,6 +74,10 @@ describe('Provider: Devise.Auth', function () {
 
         it('.registerMethod', function() {
             testPathConfigure('register', 'GET', true);
+        });
+
+        it('.confirmMethod', function() {
+            testPathConfigure('confirm', 'POST', true);
         });
 
         it('.parse', function() {
@@ -237,6 +245,46 @@ describe('Provider: Devise.Auth', function () {
             $httpBackend.flush();
 
             expect(callback).toHaveBeenCalledWith(user);
+        });
+    });
+
+    describe('.confirm', function() {
+        var user;
+        var postCallback;
+        function constantTrue() {
+            return true;
+        }
+        function callbackWraper(data) {
+            data = JSON.parse(data);
+            return postCallback(data);
+        }
+
+        beforeEach(function() {
+            postCallback = constantTrue;
+            $httpBackend.expect('GET', '/users/confirmation.json', callbackWraper).respond({});
+        });
+        afterEach(function() {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+
+        it('GETs to /users/confirmation.json', function() {
+            Auth.confirm();
+            $httpBackend.flush();
+        });
+
+        it('GETs token', function() {
+            var u = {confirmation_token: 'test'};
+            postCallback = function(data) {
+                return jsonEquals(data, u);
+            };
+            Auth.confirm(u);
+            $httpBackend.flush();
+        });
+
+        it('returns a promise', function() {
+            expect(Auth.confirm().then).toBeDefined();
+            $httpBackend.flush();
         });
     });
 
